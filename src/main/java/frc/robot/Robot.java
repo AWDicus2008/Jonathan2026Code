@@ -28,7 +28,7 @@ public class Robot extends TimedRobot {
   private final SparkMax m_rightMotor2 = new SparkMax(4,MotorType.kBrushed);
 
   private final SparkMax m_shooterIntake = new SparkMax(6,MotorType.kBrushless);
-  private final SparkMax m_feeder = new SparkMax(5,MotorType.kBrushed);
+  private final SparkMax m_feeder = new SparkMax(5,MotorType.kBrushless);
 
   //private final SparkMax m_climber = new SparkMax(7,MotorType.krushed);
 
@@ -40,7 +40,7 @@ public class Robot extends TimedRobot {
   private double driveMult = 0.80;
   private double driveSteerMult = 0.80;
   private double shooterIntakeMult = 0.7;
-  private double feedMult = 0.80;
+  private double feedMult = 0.70;
   private double powerShotMult = 0.95;
   private double powerFeedMult = 0.90;
 
