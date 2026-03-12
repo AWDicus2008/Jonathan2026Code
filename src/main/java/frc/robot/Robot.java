@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
       m_shooterIntake.set(shooterIntakeMult);
       m_feeder.set(feedMult);
     }
-    if(m_operator.getYbutton())
+    if(m_operator.getYButton())
     {//Shoot to our area/powershot
       m_shooterIntake.set(powerShotMult);
       m_feeder.set(powerFeedMult);
