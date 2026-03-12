@@ -41,6 +41,8 @@ public class Robot extends TimedRobot {
   private double driveSteerMult = 0.80;
   private double shooterIntakeMult = 0.7;
   private double feedMult = 0.80;
+  private double powerShotMult = 0.95;
+  private double powerFeedMult = 0.90;
 
   /** Called once at the beginning of the robot program. */
   public Robot() {
@@ -76,6 +78,11 @@ public class Robot extends TimedRobot {
     {//Intake/shoot
       m_shooterIntake.set(shooterIntakeMult);
       m_feeder.set(feedMult);
+    }
+    if(m_operator.getYbutton())
+    {//Shoot to our area/powershot
+      m_shooterIntake.set(powerShotMult);
+      m_feeder.set(powerFeedMult);
     }
     else if(m_operator.getLeftTriggerAxis() > 0.5)
     {//Unstuck
