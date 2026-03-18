@@ -12,6 +12,9 @@ import edu.wpi.first.util.sendable.SendableRegistry;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class. Runs the motors with
@@ -37,8 +40,8 @@ public class Robot extends TimedRobot {
   private final SparkMaxConfig c_RM2 = new SparkMaxConfig();
   private final SparkMaxConfig c_LM2 = new SparkMaxConfig();
 
-  private double driveMult = 0.80;
-  private double driveSteerMult = 0.80;
+  private double driveMult = 0.85;
+  private double driveSteerMult = 0.85;
   private double shooterIntakeMult = 0.7;
   private double feedMult = 0.70;
   private double powerShotMult = 0.95;
@@ -77,17 +80,17 @@ public class Robot extends TimedRobot {
     if(m_operator.getRightTriggerAxis() > 0.5)
     {//Intake/shoot
       m_shooterIntake.set(shooterIntakeMult);
-      m_feeder.set(feedMult);
+      m_feeder.set(-feedMult);
     }
-    if(m_operator.getYButton())
+    else if(m_operator.getYButton())
     {//Shoot to our area/powershot
       m_shooterIntake.set(powerShotMult);
-      m_feeder.set(powerFeedMult);
+      m_feeder.set(-powerFeedMult);
     }
     else if(m_operator.getLeftTriggerAxis() > 0.5)
-    {//Unstuck
-      m_shooterIntake.set(shooterIntakeMult);
-      m_feeder.set(-feedMult);
+    {//Feed
+      m_shooterIntake.set(shooterIntakeMult - 0.2);
+      m_feeder.set(feedMult);
     }
     else
     {//Stop
@@ -126,7 +129,22 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousPeriodic() {
+    //new InstantCommand(() -> m_robotDrive.arcadeDrive(0, 0.1)).withTimeout(1.0);
     m_shooterIntake.set(shooterIntakeMult);
-    m_feeder.set(feedMult);
+    m_feeder.set(-feedMult);
   }
+
+  public void autoCommand()
+  {
+    new InstantCommand(() -> m_robotDrive.arcadeDrive(0, 0.1)).withTimeout(1.0);
+    new InstantCommand(() -> shootInAuto()).withTimeout(10.0);
+  }
+
+  public void shootInAuto()
+  {
+    m_shooterIntake.set(shooterIntakeMult);
+    m_feeder.set(-feedMult);
+  }
+
+
 }
