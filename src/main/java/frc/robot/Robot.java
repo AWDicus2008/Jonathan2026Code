@@ -3,6 +3,8 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.cameraserver.CameraServer;
 
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -15,6 +17,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class. Runs the motors with
@@ -23,7 +26,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 public class Robot extends TimedRobot {
   private final XboxController m_operator;
   private final DifferentialDrive m_robotDrive;
-
+  
   private final SparkMax m_leftMotor1 = new SparkMax(1,MotorType.kBrushed);
   private final SparkMax m_leftMotor2 = new SparkMax(2,MotorType.kBrushed);
 
@@ -71,22 +74,36 @@ public class Robot extends TimedRobot {
   }
 
   @Override
+  public void robotInit() {
+    CameraServer.startAutomaticCapture();
+    SmartDashboard.putNumber("ShootMult", shooterIntakeMult);
+  }
+
+  @Override
+  public void teleopInit(){
+    shooterIntakeMult = 0.7;
+  }
+
+  @Override
   public void teleopPeriodic() {
     // Drive with arcade drive.
     // That means that the Y axis drives forward
     // and backward, and the X turns left and right.
     m_robotDrive.arcadeDrive(m_operator.getLeftY() * driveMult, -m_operator.getRightX() * driveSteerMult);
 
+    //gives the shootmult to the dashboard
+    SmartDashboard.putNumber("ShootMult", shooterIntakeMult);
+
     if(m_operator.getRightTriggerAxis() > 0.5)
     {//Intake/shoot
       m_shooterIntake.set(shooterIntakeMult);
       m_feeder.set(-feedMult);
     }
-    else if(m_operator.getYButton())
+    /*else if(m_operator.getYButton())
     {//Shoot to our area/powershot
       m_shooterIntake.set(powerShotMult);
       m_feeder.set(-powerFeedMult);
-    }
+    }*/
     else if(m_operator.getLeftTriggerAxis() > 0.5)
     {//Feed
       m_shooterIntake.set(shooterIntakeMult - 0.2);
@@ -103,28 +120,16 @@ public class Robot extends TimedRobot {
         driveMult *= -1;
     }
 
-    /*
-    if(m_operator.getYButtonPressed())
-    {
-      m_climber.set(0.8);
-      if(m_operator.getYButtonReleased())
-      {
-        m_climber.set(0);
-      }
+   
+    //Mult changing (shot power)
+    if(m_operator.getYButton() && shooterIntakeMult < 0.85)
+    {//Shoot higher
+      shooterIntakeMult += 0.005;
     }
-    else if(m_operator.getAButton())
-    {
-      m_climber.set(0.8);
-      if(m_operator.getAButtonReleased())
-      {
-        m_climber.set(0);
-      }
+    else if(m_operator.getAButton() && shooterIntakeMult > 0.70)
+    {//Shoot lower
+      shooterIntakeMult -= 0.005;
     }
-    else
-    {
-      m_climber.set(0);
-    }
-    */
   }
 
   @Override
